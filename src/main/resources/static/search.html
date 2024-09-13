@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Eligibility</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="index.html">Eligibility API</a>
+    </nav>
+    <div class="container mt-4">
+        <h2>Search Eligibility Records</h2>
+        <form id="searchForm">
+            <div class="form-group">
+                <label for="planName">Plan Name</label>
+                <input type="text" class="form-control" id="planName">
+            </div>
+            <div class="form-group">
+                <label for="planStatus">Plan Status</label>
+                <input type="text" class="form-control" id="planStatus">
+            </div>
+            <div class="form-group">
+                <label for="planStartDate">Plan Start Date</label>
+                <input type="date" class="form-control" id="planStartDate">
+            </div>
+            <div class="form-group">
+                <label for="planEndDate">Plan End Date</label>
+                <input type="date" class="form-control" id="planEndDate">
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+        <hr>
+        <h3>Search Results</h3>
+        <table class="table table-bordered" id="resultsTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Mobile</th>
+                    <th>Gender</th>
+                    <th>SSN</th>
+                    <th>Plan Name</th>
+                    <th>Plan Status</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const data = {
+                planName: document.getElementById('planName').value,
+                planStatus: document.getElementById('planStatus').value,
+                planStartDate: document.getElementById('planStartDate').value,
+                planEndDate: document.getElementById('planEndDate').value,
+            };
+            fetch('/Eligibility/search', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                const tbody = document.getElementById('resultsTable').getElementsByTagName('tbody')[0];
+                tbody.innerHTML = '';
+                data.forEach(item => {
+                    const row = tbody.insertRow();
+                    row.insertCell(0).textContent = item.name;
+                    row.insertCell(1).textContent = item.email;
+                    row.insertCell(2).textContent = item.mobile;
+                    row.insertCell(3).textContent = item.gender;
+                    row.insertCell(4).textContent = item.ssn;
+                    row.insertCell(5).textContent = item.planName;
+                    row.insertCell(6).textContent = item.planStatus;
+                });
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
